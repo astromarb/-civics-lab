@@ -1,5 +1,8 @@
  const saveAll=async()=>{S.testDate=document.getElementById('testDate').value;S.minStudy=Math.max(1,Math.min(128,parseInt(document.getElementById('minStudy').value)||10));document.querySelectorAll('[data-dyn]').forEach(i=>{if(i.value.trim())S.dynamicAnswers[i.dataset.dyn]=i.value.trim();else delete S.dynamicAnswers[i.dataset.dyn]});const {error}=await supabase.from('user_settings').upsert({user_id:currentUser.id,test_date:S.testDate||null,daily_study_requirement:S.minStudy,dynamic_answers:S.dynamicAnswers,theme_preference:S.theme||'dark',updated_at:new Date().toISOString()},{onConflict:'user_id'});if(error){console.error(error);setSync('Sync error',true);return false}setSync('Synced');return true};
  document.getElementById('saveSettings').onclick=async()=>{if(await saveAll())nav('home')};document.getElementById('saveDyn').onclick=async()=>{const msg=document.getElementById('dynSaveMsg');if(await saveAll()){msg.textContent='Saved ✓';msg.classList.add('show');clearTimeout(msg._hideTimer);msg._hideTimer=setTimeout(()=>msg.classList.remove('show'),1800)}};
+ const qdbBtn=document.getElementById('toggleQdb'),qdbPanel=document.getElementById('questionDbPanel'),qdbSearch=document.getElementById('qdbSearch'),qdbList=document.getElementById('qdbList');
+ qdbBtn.onclick=()=>{const opening=qdbBtn.getAttribute('aria-expanded')!=='true';qdbBtn.setAttribute('aria-expanded',String(opening));qdbPanel.hidden=!opening;qdbBtn.textContent=opening?'Hide database':'View database';if(opening)qdbSearch.focus()};
+ qdbSearch.oninput=()=>{qdbList.innerHTML=qdbRows(qdbSearch.value)||'<div class="item muted">No matching questions.</div>'};
 }
 function render(v){({home:renderHome,practice:renderPractice,quiz:renderQuiz,weak:renderWeak,sessions:renderSessions,settings:renderSettings}[v])()}
 function updateThemeButtons(mode){
@@ -15,7 +18,7 @@ function applyTheme(mode,animate=true){
   const swap=()=>{root.dataset.fieldMode=next;S.theme=next;try{localStorage.setItem('uscis-civics-theme',next)}catch{}updateThemeButtons(next)};
   if(!animate||window.matchMedia('(prefers-reduced-motion: reduce)').matches){swap();return}
   root.classList.add('theme-animating');
-  requestAnimationFrame(()=>{swap();setTimeout(()=>root.classList.remove('theme-animating'),380)});
+  requestAnimationFrame(()=>{swap();setTimeout(()=>root.classList.remove('theme-animating'),400)});
 }
 async function persistTheme(){
   if(!currentUser)return;
@@ -31,8 +34,9 @@ async function showApp(user){
   document.getElementById('authGate').classList.add('hidden');
   document.getElementById('appShell').classList.remove('hidden');
   document.getElementById('userEmail').textContent=user.email||'Signed in';
-  setSync('Syncing…');
+  setSync('Loading questions…');
   try{
+    await loadQuestionBank();
     const {error:profileError}=await supabase.from('profiles').upsert({id:user.id,display_name:user.email?.split('@')[0]||null},{onConflict:'id'});
     if(profileError)console.warn('Profile sync:',profileError.message);
     await loadRemoteState();
@@ -40,14 +44,14 @@ async function showApp(user){
     renderHome();
   }catch(err){
     console.error('App initialization failed:',err);
-    setSync('Sync error',true);
-    renderHome();
+    setSync('Data error',true);
+    document.getElementById('home').innerHTML=`<div class="card"><h2 class="badtxt">Question database could not be loaded.</h2><p>${esc(err.message||String(err))}</p><p class="muted">Civics Lab requires exactly 128 canonical rows from Supabase and does not fall back to an embedded question bank.</p></div>`;
   }finally{
     enteringUserId=null;
   }
 }
 function showLogin(){
-  currentUser=null;currentSessionId=null;enteringUserId=null;S=base();
+  currentUser=null;currentSessionId=null;enteringUserId=null;BANK=[];S=base();
   document.getElementById('appShell').classList.add('hidden');
   document.getElementById('authGate').classList.remove('hidden');
   let pref='dark';try{pref=localStorage.getItem('uscis-civics-theme')||'dark'}catch{}
@@ -75,9 +79,7 @@ for(const id of ['themeToggle','authThemeToggle']){
 document.getElementById('logoutBtn').addEventListener('click',async()=>{await supabase.auth.signOut();showLogin()});
 supabase.auth.onAuthStateChange((event,session)=>{
   if(event==='SIGNED_OUT'){showLogin();return}
-  if((event==='SIGNED_IN'||event==='TOKEN_REFRESHED'||event==='USER_UPDATED')&&session?.user&&currentUser?.id!==session.user.id){
-    queueMicrotask(()=>showApp(session.user));
-  }
+  if((event==='SIGNED_IN'||event==='TOKEN_REFRESHED'||event==='USER_UPDATED')&&session?.user&&currentUser?.id!==session.user.id){queueMicrotask(()=>showApp(session.user))}
 });
 let initialTheme='dark';try{initialTheme=localStorage.getItem('uscis-civics-theme')||'dark'}catch{}
 applyTheme(initialTheme,false);
