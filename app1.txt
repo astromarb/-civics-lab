@@ -1,5 +1,5 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/+esm";
-const BANK=globalThis.__CIVICS_BANK;
+let BANK=[];
 const SUPABASE_URL='https://ruqxmmtvfspeazlwaypi.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY='sb_publishable_OBJuOvhNVAnWCPLy2XcyVg_p17TcjI4';
 const supabase=createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
@@ -13,6 +13,12 @@ function base(){return {sessions:[],attempts:[],stats:{},studiedByDay:{},testDat
 let S=base();
 function st(id){return S.stats[id]||(S.stats[id]={seen:0,correct:0,wrong:0})}
 function setSync(text,bad=false){const e=document.getElementById('syncBadge');if(e){e.textContent=text;e.className='badge '+(bad?'badtxt':'')}}
+async function loadQuestionBank(){
+  const {data,error}=await supabase.from('civics_questions').select('id,category,question,accepted_answers,required_answers,is_dynamic,context_paragraph,deeper_paragraph_1,deeper_paragraph_2,source_refs,uscis_version').order('id');
+  if(error)throw error;
+  if(!data||data.length!==128)throw new Error(`Question database integrity error: expected 128 rows, received ${data?.length||0}.`);
+  BANK=data.map(x=>({id:x.id,category:x.category,question:x.question,answers:x.accepted_answers||[],required:x.required_answers||1,dynamic:!!x.is_dynamic,context:x.context_paragraph||'',deeper1:x.deeper_paragraph_1||'',deeper2:x.deeper_paragraph_2||'',sources:x.source_refs||[],uscisVersion:x.uscis_version||'2025'}));
+}
 async function loadRemoteState(){
   if(!currentUser)return;
   setSync('Syncing…');
