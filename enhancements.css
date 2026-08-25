@@ -1,0 +1,64 @@
+/* Theme transitions: text changes faster than surfaces/backgrounds. */
+html.theme-animating body,
+html.theme-animating .nav,
+html.theme-animating .card,
+html.theme-animating .stat,
+html.theme-animating .item,
+html.theme-animating .notice,
+html.theme-animating .face,
+html.theme-animating .answerbox,
+html.theme-animating .authgate,
+html.theme-animating .badge,
+html.theme-animating input,
+html.theme-animating select,
+html.theme-animating textarea,
+html.theme-animating .progress,
+html.theme-animating button {
+  transition-property: background-color, border-color, box-shadow;
+  transition-duration: 380ms;
+  transition-timing-function: ease;
+}
+html.theme-animating h1,
+html.theme-animating h2,
+html.theme-animating h3,
+html.theme-animating h4,
+html.theme-animating p,
+html.theme-animating span,
+html.theme-animating label,
+html.theme-animating b,
+html.theme-animating a,
+html.theme-animating button,
+html.theme-animating input,
+html.theme-animating select,
+html.theme-animating textarea,
+html.theme-animating .kicker,
+html.theme-animating .muted,
+html.theme-animating .question {
+  transition-property: color, fill, stroke;
+  transition-duration: 145ms;
+  transition-timing-function: ease-out;
+}
+
+.study-context{font-size:17px;line-height:1.7;margin:0 0 18px;max-width:78ch}
+.go-deeper-btn{width:auto!important;margin-top:2px}
+.deep-content{margin-top:16px;padding-top:16px;border-top:1px solid var(--line);animation:deepReveal .24s ease}
+.deep-content p{font-size:16px;line-height:1.72;max-width:78ch}
+.study-sources{margin-top:18px;padding:12px;background:var(--panel2);border-radius:10px;line-height:1.6}
+.study-sources a{color:var(--accent);text-decoration:none;border-bottom:1px solid color-mix(in srgb,var(--accent) 40%,transparent)}
+.study-sources a:hover{border-bottom-color:var(--accent)}
+@keyframes deepReveal{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+
+.qdb-list{display:grid;gap:10px;margin-top:14px;max-height:70vh;overflow:auto;padding-right:4px}
+.qdb-row{display:grid;grid-template-columns:52px minmax(0,1fr);gap:12px;padding:14px;background:var(--panel2);border:1px solid var(--line);border-radius:12px}
+.qdb-number{font-variant-numeric:tabular-nums;font-weight:800;color:var(--accent)}
+.qdb-answer{margin-top:9px;line-height:1.5}
+#questionDbPanel{margin-top:16px}
+
+@media(max-width:640px){
+  .study-context{font-size:16px;line-height:1.65}
+  .deep-content p{font-size:15.5px;line-height:1.68}
+  .go-deeper-btn{width:100%!important}
+  .qdb-row{grid-template-columns:1fr;gap:6px;padding:12px}
+  .qdb-list{max-height:none;overflow:visible}
+}
+@media(prefers-reduced-motion:reduce){.deep-content{animation:none}}
