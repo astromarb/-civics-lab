@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>USCIS Civics Lab — 2025 Test</title>
+<script>try{document.documentElement.dataset.fieldMode=localStorage.getItem("uscis-civics-theme")||"dark"}catch{document.documentElement.dataset.fieldMode="dark"}</script>
+<link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+<div id="authGate" class="authgate"><div class="row space"><h1>USCIS Civics Lab</h1><button class="theme-toggle" id="authThemeToggle" type="button" aria-label="Switch to light mode" title="Toggle light/dark mode"><svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path></svg><svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></button></div><p class="muted">Sign in with an account created for this private study app.</p><form id="loginForm"><label>Email</label><input id="loginEmail" type="email" autocomplete="username" required><label>Password</label><input id="loginPassword" type="password" autocomplete="current-password" required><button class="btn primary" type="submit">Sign in</button><div id="loginMsg" class="small" style="margin-top:12px"></div></form></div>
+<div class="shell hidden" id="appShell">
+  <div class="top">
+    <div><div class="kicker">USCIS 2025 Naturalization Civics Test</div><h1>Civics Lab</h1><div class="sub">Study all 128 official civics questions, practice recall, run timed 20-question simulations, and track weak areas over time.</div></div>
+    <div class="userbar"><button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to light mode" title="Toggle light/dark mode"><svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path></svg><svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></button><span class="badge" id="syncBadge">Supabase sync</span><span class="badge" id="userEmail"></span><button class="btn" id="logoutBtn" type="button">Log out</button></div>
+  </div>
+  <div class="grid"><nav class="nav" aria-label="Sections"><button data-view="home" class="active">Dashboard</button><button data-view="practice">Practice</button><button data-view="quiz">Quiz</button><button data-view="weak">Weakest Questions</button><button data-view="sessions">Sessions & Attempts</button><button data-view="settings">Test Date & Settings</button></nav><main class="main"><section id="home" class="view"></section><section id="practice" class="view hidden"></section><section id="quiz" class="view hidden"></section><section id="weak" class="view hidden"></section><section id="sessions" class="view hidden"></section><section id="settings" class="view hidden"></section></main></div>
+</div>
+<script type="module" src="./bootstrap.js"></script>
+</body>
+</html>
